@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <title>Admin Logs</title>
+</head>
+<body>
+
+<h2>Admin Action Logs</h2>
+<form method="get" style="margin-bottom:16px;">
+  <label>
+    Action:
+    <input type="text" name="action" value="{{ filters.action or '' }}">
+  </label>
+
+  <label>
+    Admin:
+    <input type="text" name="admin" value="{{ filters.admin or '' }}">
+  </label>
+
+  <button type="submit">Filter</button>
+</form>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Admin</th>
+    <th>Action</th>
+    <th>Target Type</th>
+    <th>Target ID</th>
+    <th>Time</th>
+    <th>IP</th>
+
+  </tr>
+
+  {% for log in logs %}
+  <tr>
+    <td>{{ log.admin_email }}</td>
+ <td>
+  {% if log.action == "Login" %}
+    🔐 Login
+  {% elif "Revoke" in log.action %}
+    🔄 {{ log.action }}
+  {% elif "Approve" in log.action %}
+    ✅ {{ log.action }}
+  {% elif "Reject" in log.action %}
+    ❌ {{ log.action }}
+  {% else %}
+    {{ log.action }}
+  {% endif %}
+</td>
+
+
+    <td>{{ log.target_type }}</td>
+    <td>{{ log.target_id }}</td>
+    <td>{{ log.created_at }}</td>
+    <td>{{ log.ip_address or "-" }}</td>
+
+  </tr>
+  {% endfor %}
+
+</table>
+
+<br>
+<a href="/admin/dashboard">← Back to dashboard</a>
+{% if total_pages > 1 %}
+<div style="margin-top:16px;">
+  {% if page > 1 %}
+    <a href="?page={{ page - 1 }}">◀ Prev</a>
+  {% endif %}
+
+  Page {{ page }} / {{ total_pages }}
+
+  {% if page < total_pages %}
+    <a href="?page={{ page + 1 }}">Next ▶</a>
+  {% endif %}
+</div>
+{% endif %}
+
+</body>
+</html>

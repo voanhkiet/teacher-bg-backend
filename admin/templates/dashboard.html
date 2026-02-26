@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  </style>
+  <a href="/admin/logout">Logout</a>
+
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<div class="grid">
+  <div class="box">
+    <h3>Users</h3>
+    <p>{{ stats.users }}</p>
+  </div>
+
+  <div class="box">
+    <h3>Packs</h3>
+    <p>{{ stats.packs }}</p>
+  </div>
+
+  <div class="box">
+    <h3>Revenue (VND)</h3>
+    <p><strong>{{ "{:,}".format(stats.revenue_vnd) }}</strong></p>
+  </div>
+</div>
+
+<div class="box">
+  <h3>Payments</h3>
+  <ul>
+    <li>Total: {{ stats.payments.total }}</li>
+    <li>Pending: {{ stats.payments.pending }}</li>
+    <li>Approved: {{ stats.payments.approved }}</li>
+    <li>Rejected: {{ stats.payments.rejected }}</li>
+    <li>Revoked: {{ stats.payments.revoked }}</li>
+  </ul>
+</div>
+
+<p>
+  👉 <a href="/admin/payments">View all payments</a>
+</p>
+
+</body>
+</html>

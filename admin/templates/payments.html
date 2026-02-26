@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+  <title>Admin Payments</title>
+  <meta name="admin-token" content="{{ admin_token }}">
+  
+</head>
+
+<body>
+
+<h2>Payments</h2>
+
+<!-- FILTER FORM -->
+<form method="get" style="margin-bottom:16px;">
+  <label>
+    Status:
+    <select name="status">
+      <option value="">All</option>
+      <option value="pending" {{ 'selected' if filters and filters.status == 'pending' }}>Pending</option>
+      <option value="approved" {{ 'selected' if filters and filters.status == 'approved' }}>Approved</option>
+      <option value="rejected" {{ 'selected' if filters and filters.status == 'rejected' }}>Rejected</option>
+      <option value="revoked" {{ 'selected' if filters and filters.status == 'revoked' }}>Revoked</option>
+    </select>
+  </label>
+
+  <label>
+    User email:
+    <input type="text" name="email" value="{{ filters.email or '' if filters else '' }}">
+  </label>
+
+  <label>
+    Sort:
+    <select name="sort">
+      <option value="newest" {{ 'selected' if filters and filters.sort == 'newest' }}>Newest</option>
+      <option value="oldest" {{ 'selected' if filters and filters.sort == 'oldest' }}>Oldest</option>
+      <option value="amount" {{ 'selected' if filters and filters.sort == 'amount' }}>Amount</option>
+    </select>
+  </label>
+
+  <button type="submit">Apply</button>
+</form>
+
+<!-- TABLE -->
+<table border="1" cellpadding="6">
+  <tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Pack</th>
+    <th>Amount</th>
+    <th>Status</th>
+    <th>Note</th>
+  </tr>
+
+  {% for p in payments %}
+  <tr {% if p.status == "pending" %}style="background:#fff8e1"{% endif %}>
+  <td>{{ p.payment_id }}</td>
+  <td>{{ p.user_email }}</td>
+  <td>{{ p.pack_title }}</td>
+  <td>{{ p.amount_vnd }}</td>
+
+  <!-- STATUS COLUMN -->
+  <td>
+    {% if p.status == "pending" %}
+      ⏳ Pending
+    {% elif p.status == "approved" %}
+      ✅ Approved
+    {% elif p.status == "rejected" %}
+      ❌ Rejected
+    {% elif p.status == "revoked" %}
+      🔄 Revoked
+    {% else %}
+      —
+    {% endif %}
+  </td>
+
+  <!-- NOTE -->
+  <td>{{ p.note or "—" }}</td>
+
+  <!-- ACTIONS COLUMN -->
+  <td>
+  {% if p.status == "approved" %}
+    <button
+      type="button"
+      data-id="{{ p.payment_id }}"
+      onclick="revoke(this)">
+      Revoke
+    </button>
+
+  {% elif p.status == "pending" %}
+    <button
+      type="button"
+      data-id="{{ p.payment_id }}"
+      onclick="approve(this)">
+      Approve
+    </button>
+
+    <button
+      type="button"
+      data-id="{{ p.payment_id }}"
+      onclick="rejectPayment(this)">
+      Reject
+    </button>
+
+  {% else %}
+    —
+  {% endif %}
+</td>
+
+</tr>
+
+  {% endfor %}
+</table>
+{% if total_pages > 1 %}
+<div style="margin-top:16px;">
+
+    {% if page > 1 %}
+      <a href="?page={{ page - 1 }}&status={{ filters.status }}&email={{ filters.email }}&sort={{ filters.sort }}">◀ Prev</a>
+    {% endif %}
+
+    Page {{ page }} / {{ total_pages }}
+
+    {% if page < total_pages %}
+      <a href="?page={{ page + 1 }}&status={{ filters.status }}&email={{ filters.email }}&sort={{ filters.sort }}">Next ▶</a>
+    {% endif %}
+</div>
+{% endif %}
+<div id="toast" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-weight: bold;
+">
+  Success
+</div>
+
+</body>
+<script>
+async function approve(btn) {
+  const id = btn.dataset.id;
+  if (!confirm("Approve this payment?")) return;
+
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
+  const res = await fetch(`/admin/payments/${id}/approve`, {
+    method: "POST"
+  });
+
+  if (res.ok) location.reload();
+  else {
+    alert("Approve failed");
+    btn.disabled = false;
+    btn.textContent = "Approve";
+  }
+}
+
+async function rejectPayment(btn) {
+  const id = btn.dataset.id;
+  const note = prompt("Reason for rejection:");
+  if (!note) return;
+
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
+  const res = await fetch(`/admin/payments/${id}/reject`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({ note })
+  });
+
+  if (res.ok) location.reload();
+  else {
+    alert("Reject failed");
+    btn.disabled = false;
+    btn.textContent = "Reject";
+  }
+}
+
+async function revoke(btn) {
+  const id = btn.dataset.id;
+
+  if (!confirm("Are you sure you want to revoke this payment?")) return;
+
+  const note = prompt("Refund note:");
+  if (!note) return;
+
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
+  const res = await fetch(`/admin/payments/${id}/revoke`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({ note })
+  });
+
+  if (res.ok) {
+    showToast("Payment revoked successfully");
+    setTimeout(() => location.reload(), 1200);
+  } else {
+    showToast("Revoke failed", true);
+    btn.disabled = false;
+    btn.textContent = "Revoke";
+  }
+}
+
+function showToast(message, isError = false) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.background = isError ? "#e53935" : "#4caf50";
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 2000);
+}
+</script>
+
+
+
+</html>
