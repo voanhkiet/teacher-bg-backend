@@ -1,10 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 root_bp = Blueprint("root", __name__)
 
 @root_bp.route("/")
 def index():
-    return {
-        "status": "ok",
-        "service": "teacher-bg-api"
-    }
+    return render_template("product.html")
