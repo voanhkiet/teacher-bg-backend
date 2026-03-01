@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gói Đã Mua</title>
+</head>
+<body>
+    <h1>Gói Bạn Đã Mua</h1>
+
+    {% if packs %}
+        <ul>
+            {% for pack in packs %}
+                <li>
+                    <strong>{{ pack.title }}</strong>
+                    <br>
+                    Mua ngày: {{ pack.granted_at.strftime("%d/%m/%Y") }}
+                    <br>
+                    <a href="/download/{{ pack.id }}">Tải xuống</a>
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Bạn chưa mua gói nào.</p>
+    {% endif %}
+
+</body>
+</html>

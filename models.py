@@ -124,4 +124,4 @@ class AdminActionLog(db.Model):
     user_agent = db.Column(db.String(255))
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    admin_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+

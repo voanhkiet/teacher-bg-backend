@@ -368,13 +368,13 @@ def admin_approve_payment(payment_id):
         ))
 
     payment.status = "approved"
-    payment.processed_by = request.admin_id
+    payment.processed_by = session.get("admin_id")
     payment.processed_at = datetime.utcnow()
     ip_address = request.headers.get("X-Forwarded-For", request.remote_addr)
 
 # ✅ LOG ACTION
     db.session.add(AdminActionLog(
-        admin_id=request.admin_id,
+        admin_id=session.get("admin_id"),
         action="Approve Payment",
         target_type="payment",
         target_id=payment.id,
@@ -480,7 +480,7 @@ def admin_logs():
     
     query = (
         db.session.query(AdminActionLog, User)
-        .join(User, User.id == AdminActionLog.admin_id)
+        .outerjoin(User, User.id == AdminActionLog.admin_id)
     )
 
     # Filters

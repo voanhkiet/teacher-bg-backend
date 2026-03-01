@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh Toán</title>
+</head>
+<body style="font-family: Arial; text-align:center;">
+
+<h1>Thanh Toán Qua QR</h1>
+
+<p>Vui lòng chuyển khoản 69.000 VNĐ</p>
+
+<img src="/static/qr-code.png" width="300">
+
+<p>Nội dung chuyển khoản: BG{{ pack_id }}</p>
+
+<form method="POST" style="margin-top:30px;">
+    <input name="name" placeholder="Họ và tên" required><br><br>
+    <input name="email" placeholder="Email" required><br><br>
+    <input name="transfer_code" placeholder="Mã giao dịch (nếu có)"><br><br>
+    <button type="submit">Tôi Đã Thanh Toán</button>
+</form>
+
+</body>
+</html>

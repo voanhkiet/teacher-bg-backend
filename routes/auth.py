@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template, session, redirect
 from extensions import db
 from models import User
 from utils.jwt import create_access_token
@@ -32,33 +32,28 @@ def register():
 
 from utils.jwt import create_access_token
 
-@auth_bp.route("/login", methods=["POST"])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    data = request.get_json() or {}
 
-    email = data.get("email")
-    password = data.get("password")
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
 
-    if not email or not password:
-        return {"error": "Email and password required"}, 400
+        if not email or not password:
+            return render_template("login.html", error="Email and password required")
 
-    user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
 
-    if not user or not user.check_password(password):
-        return {"error": "Invalid credentials"}, 401
+        if not user or not user.check_password(password):
+            return render_template("login.html", error="Invalid credentials")
 
-    token = create_access_token(user.id)
+        session["user_id"] = user.id
+        session["user_email"] = user.email
 
-    return {
-        "message": "Login successful",
-        "access_token": token,
-        "user": {
-            "id": user.id,
-            "email": user.email,
-        }
-    }, 200
+        return redirect("/my-packs")
 
-
+    return render_template("login.html")
+    
 @auth_bp.route("/me", methods=["GET"])
 @login_required
 def me():
