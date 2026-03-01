@@ -7,9 +7,9 @@ from config import Config
 from extensions import db
 from routes import register_routes
 from admin import admin_bp
+from flask_migrate import Migrate
 import os
-from flask_cors import CORS
-from dotenv import load_dotenv
+
 
 def create_app():
     app = Flask(__name__)
@@ -18,18 +18,17 @@ def create_app():
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
 
     CORS(app)
-    db.init_app(app)
-    register_routes(app)
 
-    # ✅ REGISTER ADMIN
+    db.init_app(app)
+    migrate = Migrate(app, db)
+
+    register_routes(app)
     app.register_blueprint(admin_bp)
 
+    # =========================
+    # AUTO CREATE DEFAULT ADMIN
+    # =========================
     with app.app_context():
-        db.create_all()
-
-        # =========================
-        # AUTO CREATE DEFAULT ADMIN
-        # =========================
         from models import User
 
         admin_email = os.getenv("DEFAULT_ADMIN_EMAIL")
@@ -41,19 +40,17 @@ def create_app():
             if not existing_admin:
                 admin = User(
                     email=admin_email,
-                    is_admin=1
+                    is_admin=True
                 )
                 admin.set_password(admin_password)
 
                 db.session.add(admin)
                 db.session.commit()
 
-                print("✅ Default admin created:")
-                print("   Email:", admin_email)
+                print("✅ Default admin created:", admin_email)
         else:
-            print("⚠️ No DEFAULT_ADMIN_EMAIL or PASSWORD set in .env")
-    
-    
+            print("⚠️ No DEFAULT_ADMIN_EMAIL or PASSWORD set")
+
         print("=== ROUTES ===")
         for rule in app.url_map.iter_rules():
             print(rule)
