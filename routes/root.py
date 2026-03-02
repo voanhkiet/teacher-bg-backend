@@ -40,11 +40,13 @@ def my_packs():
 
     return render_template("my_packs.html", packs=packs)
 @root_bp.route("/download/<int:pack_id>")
-@login_required
 def download_pack(pack_id):
-    user_id = session.get("user_id")
 
-    # Check ownership
+    if "user_id" not in session:
+        return redirect(url_for("auth.login", next=request.path))
+
+    user_id = session["user_id"]
+
     ownership = Ownership.query.filter_by(
         user_id=user_id,
         pack_id=pack_id
@@ -58,15 +60,12 @@ def download_pack(pack_id):
     if not pack.file_path:
         return abort(404)
 
-    # Absolute base directory
     base_dir = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..", "protected_files")
     )
 
-    # Normalize path (prevents ../../ attacks)
     safe_path = os.path.normpath(os.path.join(base_dir, pack.file_path))
 
-    # Ensure file stays inside protected_files
     if not safe_path.startswith(base_dir):
         return abort(403)
 
