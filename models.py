@@ -38,6 +38,8 @@ class Pack(db.Model):
     description_en = db.Column(db.Text)
 
     cover_image = db.Column(db.String(255))
+       # ✅ ADD THIS
+    file_path = db.Column(db.String(255), nullable=False)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

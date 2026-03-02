@@ -12,3 +12,5 @@ instance/
 
 # OS
 .DS_Store
+
+protected_files/
