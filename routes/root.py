@@ -3,7 +3,7 @@ from models import Ownership, Pack
 from extensions import db
 import os
 from utils.auth import login_required, admin_required
-
+from utils.storage import generate_download_url
 root_bp = Blueprint("root", __name__)
 
 @root_bp.route("/")
@@ -39,13 +39,11 @@ def my_packs():
     ]
 
     return render_template("my_packs.html", packs=packs)
+
 @root_bp.route("/download/<int:pack_id>")
+@login_required
 def download_pack(pack_id):
-
-    if "user_id" not in session:
-        return redirect(url_for("auth.login", next=request.path))
-
-    user_id = session["user_id"]
+    user_id = session.get("user_id")
 
     ownership = Ownership.query.filter_by(
         user_id=user_id,
@@ -60,20 +58,6 @@ def download_pack(pack_id):
     if not pack.file_path:
         return abort(404)
 
-    base_dir = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "protected_files")
-    )
+    signed_url = generate_download_url(pack.file_path)
 
-    safe_path = os.path.normpath(os.path.join(base_dir, pack.file_path))
-
-    if not safe_path.startswith(base_dir):
-        return abort(403)
-
-    if not os.path.exists(safe_path):
-        return abort(404)
-
-    return send_file(
-        safe_path,
-        as_attachment=True,
-        download_name=f"{pack.title_en}.zip"
-    )
+    return redirect(signed_url)
