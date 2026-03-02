@@ -251,8 +251,7 @@ def admin_login():
         # =============================
         # 2️⃣ NORMAL LOGIN CHECK
         # =============================
-        user = User.query.filter_by(email=email, is_admin=1).first()
-
+        user = User.query.filter_by(email=email, is_admin=True).first()
         if not user or not user.check_password(password):
 
             # Log failed login
@@ -397,13 +396,13 @@ def admin_reject_payment(payment_id):
 
     payment.status = "rejected"
     payment.note = note
-    payment.processed_by = request.admin_id
+    payment.processed_by = session.get("admin_id")
     payment.processed_at = datetime.utcnow()
     ip_address = request.headers.get("X-Forwarded-For", request.remote_addr)
 
  # ✅ LOG ACTION
     db.session.add(AdminActionLog(
-        admin_id=request.admin_id,
+        admin_id=session.get("admin_id"),
         action="Reject Payment",
         target_type="payment",
         target_id=payment.id,
@@ -429,11 +428,11 @@ def admin_revoke_payment(payment_id):
 
     payment.status = "revoked"
     payment.note = note
-    payment.processed_by = request.admin_id
+    payment.processed_by = session.get("admin_id")
     payment.processed_at = datetime.utcnow()
      # ✅ LOG ACTION
     db.session.add(AdminActionLog(
-        admin_id=request.admin_id,
+        admin_id=session.get("admin_id"),
         action="Revoke Payment",
         target_type="payment",
         target_id=payment.id,
