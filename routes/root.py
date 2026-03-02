@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, session, redirect, url_for, send_f
 from models import Ownership, Pack
 from extensions import db
 import os
+from utils.auth import login_required, admin_required
 
 root_bp = Blueprint("root", __name__)
 
@@ -39,26 +40,31 @@ def my_packs():
 
     return render_template("my_packs.html", packs=packs)
 @root_bp.route("/download/<int:pack_id>")
+@login_required
 def download_pack(pack_id):
+    user_id = session.get("user_id")
 
-    if "user_id" not in session:
-        return redirect("/auth/login")
-
-    user_id = session["user_id"]
-
+    # Check ownership
     ownership = Ownership.query.filter_by(
         user_id=user_id,
         pack_id=pack_id
     ).first()
 
     if not ownership:
-        return "Unauthorized", 403
+        return abort(403)
 
     pack = Pack.query.get_or_404(pack_id)
 
-    file_path = pack.file_path
+    if not pack.file_path:
+        return abort(404)
+
+    file_path = os.path.join("protected_files", pack.file_path)
 
     if not os.path.exists(file_path):
-        return "File not found", 404
+        return abort(404)
 
-    return send_file(file_path, as_attachment=True)
+    return send_file(
+        file_path,
+        as_attachment=True,
+        download_name=f"{pack.title_en}.zip"
+    )
