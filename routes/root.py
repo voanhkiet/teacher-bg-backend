@@ -41,7 +41,6 @@ def my_packs():
     return render_template("my_packs.html", packs=packs)
 
 @root_bp.route("/download/<int:pack_id>")
-@login_required
 def download_pack(pack_id):
     user_id = session.get("user_id")
 
