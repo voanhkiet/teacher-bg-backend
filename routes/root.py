@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, send_from_directory, abort, send_file
+from flask import Blueprint, render_template, session, redirect, url_for, send_from_directory, abort, send_file,request
 from models import Ownership, Pack
 from extensions import db
 import os
@@ -18,7 +18,7 @@ def buy_page(pack_id):
 def my_packs():
 
     if "user_id" not in session:
-        return redirect("/auth/login")
+        return redirect(url_for("auth.login", next=request.path))
 
     user_id = session["user_id"]
 
@@ -58,13 +58,23 @@ def download_pack(pack_id):
     if not pack.file_path:
         return abort(404)
 
-    file_path = os.path.join("protected_files", pack.file_path)
+    # Absolute base directory
+    base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "protected_files")
+    )
 
-    if not os.path.exists(file_path):
+    # Normalize path (prevents ../../ attacks)
+    safe_path = os.path.normpath(os.path.join(base_dir, pack.file_path))
+
+    # Ensure file stays inside protected_files
+    if not safe_path.startswith(base_dir):
+        return abort(403)
+
+    if not os.path.exists(safe_path):
         return abort(404)
 
     return send_file(
-        file_path,
+        safe_path,
         as_attachment=True,
         download_name=f"{pack.title_en}.zip"
     )
