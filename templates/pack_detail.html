@@ -58,6 +58,22 @@
                 grid-template-columns: 1fr;
             }
         }
+        .preview-gallery {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.preview-thumb {
+    width: 120px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.preview-thumb:hover {
+    transform: scale(1.05);
+}
     </style>
 </head>
 <body>
@@ -69,7 +85,13 @@
         <div class="product-image">
             <img src="{{ pack.cover_image }}" alt="{{ pack.title_vi }}">
         </div>
-
+        {% if pack.preview_images %}
+<div class="preview-gallery">
+    {% for img in pack.preview_images %}
+        <img src="{{ img }}" class="preview-thumb">
+    {% endfor %}
+</div>
+{% endif %}
         <div>
             <h1>{{ pack.title_vi }}</h1>
 
@@ -99,6 +121,12 @@
     </div>
 
 </div>
-
+<script>
+document.querySelectorAll('.preview-thumb').forEach(img => {
+    img.addEventListener('click', function() {
+        document.querySelector('.product-image img').src = this.src;
+    });
+});
+</script>
 </body>
 </html>

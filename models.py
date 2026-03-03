@@ -1,6 +1,7 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
+from sqlalchemy import JSON
 
 # ---------------- USER ----------------
 
@@ -45,6 +46,7 @@ class Pack(db.Model):
 
     images = db.relationship("Image", backref="pack", lazy=True)
     owners = db.relationship("Ownership", backref="pack", lazy=True)
+    preview_images = db.Column(JSON, nullable=True)
 
     @property
     def is_free(self):
