@@ -61,3 +61,8 @@ def download_pack(pack_id):
     signed_url = generate_download_url(pack.file_path)
 
     return redirect(signed_url)
+
+@root_bp.route("/pack/<int:pack_id>")
+def pack_detail(pack_id):
+    pack = Pack.query.get_or_404(pack_id)
+    return render_template("pack_detail.html", pack=pack)
