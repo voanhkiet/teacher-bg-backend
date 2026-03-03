@@ -3,59 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <title>Bộ Background PowerPoint Hiện Đại – Vol.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
-        body { font-family: Arial; margin: 0; padding: 0; text-align: center; background: #f8f9fa; }
-        .container { max-width: 900px; margin: auto; padding: 40px 20px; }
-        img { max-width: 100%; border-radius: 12px; }
-        .price { font-size: 28px; color: #e63946; margin: 20px 0; font-weight: bold; }
-        .button {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #2563eb;
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 14px 28px;
+            background: white;
+            color: #2563eb;
+            font-weight: bold;
+            border-radius: 10px;
             text-decoration: none;
-            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .section {
+            max-width: 1000px;
+            margin: auto;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .preview img {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .price-box {
+            background: white;
+            padding: 40px;
+            margin-top: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+
+        .price {
+            font-size: 32px;
+            color: #e63946;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .btn-buy {
+            display: inline-block;
+            padding: 15px 35px;
+            background: #10b981;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            text-decoration: none;
             font-size: 18px;
         }
-        ul { text-align: left; max-width: 500px; margin: auto; }
-        h1, h2 { margin-top: 30px; }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .feature-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .feature-box h3 {
+            margin-top: 0;
+        }
+
+        .steps p {
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-
-    <h1>Bộ Background PowerPoint Hiện Đại – Vol.1</h1>
-
-    <p>Thiết kế bài giảng chuyên nghiệp chỉ trong vài phút.</p>
-
-    <img src="/static/preview-collage.png" alt="Preview Background">
-
-    <div class="price">Giá: 69.000 VNĐ</div>
-
-    <a href="/buy/1" class="button">Mua Ngay</a>
-
-    <h2>Lợi Ích Khi Sử Dụng</h2>
-    <ul>
-        <li>✔ Tiết kiệm 2–3 giờ thiết kế bài giảng</li>
-        <li>✔ Giao diện hiện đại, chuyên nghiệp</li>
-        <li>✔ Dễ dàng sử dụng với PowerPoint & Google Slides</li>
-    </ul>
-
-    <h2>Bạn Sẽ Nhận Được</h2>
-    <ul>
-        <li>15 background chất lượng cao</li>
-        <li>Độ phân giải 4K (3840x2160)</li>
-        <li>Tỉ lệ 16:9 chuẩn PowerPoint</li>
-        <li>Tải về ngay sau khi thanh toán</li>
-    </ul>
-
-    <h2>Cách Mua</h2>
-    <p>1. Nhấn "Mua Ngay"</p>
-    <p>2. Thanh toán qua mã QR</p>
-    <p>3. Tải file trong tài khoản của bạn</p>
-
+<!-- HERO -->
+<div class="hero">
+    <h1>Thiết Kế Bài Giảng Chuyên Nghiệp Trong 5 Phút</h1>
+    <p>Bộ Background PowerPoint Hiện Đại – Sẵn sàng sử dụng cho giáo viên</p>
+    <a href="#buy" class="btn-primary">Mua Ngay</a>
 </div>
+
+<!-- PREVIEW -->
+<div class="section preview">
+    <h2>Xem Trước Sản Phẩm</h2>
+    <img src="/static/preview-collage.png" alt="Preview Background">
+</div>
+
+<!-- PRICE -->
+<div class="section price-box" id="buy">
+    <h2>Bộ Background PowerPoint Hiện Đại – Vol.1</h2>
+    <div class="price">69.000 VNĐ</div>
+    <a href="/buy/1" class="btn-buy">Mua Ngay</a>
+</div>
+
+<!-- BENEFITS -->
+<div class="section">
+    <h2>Lợi Ích Khi Sử Dụng</h2>
+    <div class="features">
+        <div class="feature-box">
+            <h3>⏳ Tiết Kiệm Thời Gian</h3>
+            <p>Không cần thiết kế từ đầu – chỉ cần chỉnh sửa nội dung.</p>
+        </div>
+        <div class="feature-box">
+            <h3>🎨 Thiết Kế Hiện Đại</h3>
+            <p>Phong cách chuyên nghiệp, phù hợp nhiều môn học.</p>
+        </div>
+        <div class="feature-box">
+            <h3>⚡ Tải Ngay Sau Khi Mua</h3>
+            <p>Thanh toán xong là có thể tải ngay trong tài khoản.</p>
+        </div>
+    </div>
+</div>
+
+<!-- WHAT YOU GET -->
+<div class="section">
+    <h2>Bạn Sẽ Nhận Được</h2>
+    <div class="features">
+        <div class="feature-box">
+            <p>✔ 15 background chất lượng cao</p>
+            <p>✔ Độ phân giải 4K (3840x2160)</p>
+        </div>
+        <div class="feature-box">
+            <p>✔ Tỉ lệ 16:9 chuẩn PowerPoint</p>
+            <p>✔ Sử dụng cho PowerPoint & Google Slides</p>
+        </div>
+    </div>
+</div>
+
+<!-- HOW TO BUY -->
+<div class="section steps">
+    <h2>Cách Mua</h2>
+    <p>1️⃣ Nhấn "Mua Ngay"</p>
+    <p>2️⃣ Thanh toán qua mã QR</p>
+    <p>3️⃣ Tải file trong tài khoản của bạn</p>
+</div>
+
+<footer>
+    © 2026 Hình Nền PowerPoint – Thiết kế dành riêng cho giáo viên.
+</footer>
 
 </body>
 </html>

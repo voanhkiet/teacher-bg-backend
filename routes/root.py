@@ -8,7 +8,8 @@ root_bp = Blueprint("root", __name__)
 
 @root_bp.route("/")
 def index():
-    return render_template("product.html")
+    packs = Pack.query.all()
+    return render_template("product.html", packs=packs)
 
 @root_bp.route("/buy/<int:pack_id>")
 def buy_page(pack_id):
