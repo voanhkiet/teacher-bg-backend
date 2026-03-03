@@ -4,6 +4,7 @@ from extensions import db
 import os
 from utils.auth import login_required, admin_required
 from utils.storage import generate_download_url
+
 root_bp = Blueprint("root", __name__)
 
 @root_bp.route("/")
@@ -42,6 +43,7 @@ def my_packs():
     return render_template("my_packs.html", packs=packs)
 
 @root_bp.route("/download/<int:pack_id>")
+@login_required
 def download_pack(pack_id):
     user_id = session.get("user_id")
 
@@ -65,4 +67,20 @@ def download_pack(pack_id):
 @root_bp.route("/pack/<int:pack_id>")
 def pack_detail(pack_id):
     pack = Pack.query.get_or_404(pack_id)
-    return render_template("pack_detail.html", pack=pack)
+
+    owned = False
+    user_id = session.get("user_id")
+
+    if user_id:
+        ownership = Ownership.query.filter_by(
+            user_id=user_id,
+            pack_id=pack.id
+        ).first()
+
+        owned = ownership is not None
+
+    return render_template(
+        "pack_detail.html",
+        pack=pack,
+        owned=owned
+    )

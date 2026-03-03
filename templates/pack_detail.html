@@ -77,9 +77,18 @@
                 {{ "{:,}".format(pack.price_vnd) }} VNĐ
             </div>
 
-            <a href="/buy/{{ pack.id }}" class="btn-buy">
-                Mua Ngay
-            </a>
+            {% if owned %}
+    <a href="/download/{{ pack.id }}" class="btn-buy">
+        Tải Xuống
+    </a>
+    <p style="color:#16a34a; margin-top:10px;">
+        ✔ Bạn đã mua sản phẩm này
+    </p>
+{% else %}
+    <a href="/pack/{{ pack.id }}" class="btn-buy">
+        Mua Ngay
+    </a>
+{% endif %}
 
             <div class="description">
                 <h3>Mô Tả Sản Phẩm</h3>
