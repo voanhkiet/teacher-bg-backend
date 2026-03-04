@@ -12,11 +12,11 @@
             background: #f5f7fb;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            padding: 60px 20px;
-        }
+       .container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 60px 20px;
+}
 
         .product-layout {
             display: grid;
@@ -110,48 +110,57 @@
 </head>
 <body>
 
-<div class="product-gallery">
+<div class="container">
 
-    <div class="main-image">
-        <img id="mainPreview" src="{{ pack.cover_image }}">
+<div class="product-layout">
+
+    <!-- LEFT SIDE : GALLERY -->
+    <div class="product-gallery">
+
+        <div class="main-image">
+            <img id="mainPreview" src="{{ pack.cover_image }}">
+        </div>
+
+        {% if pack.preview_images %}
+        <div class="preview-list">
+            {% for img in pack.preview_images %}
+                <img src="{{ img }}" class="preview-thumb">
+            {% endfor %}
+        </div>
+        {% endif %}
+
     </div>
 
-    {% if pack.preview_images %}
-    <div class="preview-list">
-        {% for img in pack.preview_images %}
-            <img src="{{ img }}" class="preview-thumb">
-        {% endfor %}
-    </div>
-    {% endif %}
+    <!-- RIGHT SIDE : PRODUCT INFO -->
+    <div>
 
-</div>
-        <div>
-            <h1>{{ pack.title_vi }}</h1>
+        <h1>{{ pack.title_vi }}</h1>
 
-            <div class="price">
-                {{ "{:,}".format(pack.price_vnd) }} VNĐ
-            </div>
+        <div class="price">
+            {{ "{:,}".format(pack.price_vnd) }} VNĐ
+        </div>
 
-            {% if owned %}
-    <a href="/download/{{ pack.id }}" class="btn-buy">
-        Tải Xuống
-    </a>
-    <p style="color:#16a34a; margin-top:10px;">
-        ✔ Bạn đã mua sản phẩm này
-    </p>
-{% else %}
-    <a href="/pack/{{ pack.id }}" class="btn-buy">
-        Mua Ngay
-    </a>
-{% endif %}
+        {% if owned %}
+            <a href="/download/{{ pack.id }}" class="btn-buy">
+                Tải Xuống
+            </a>
+            <p style="color:#16a34a; margin-top:10px;">
+                ✔ Bạn đã mua sản phẩm này
+            </p>
+        {% else %}
+            <a href="/buy/{{ pack.id }}" class="btn-buy">
+                Mua Ngay
+            </a>
+        {% endif %}
 
-            <div class="description">
-                <h3>Mô Tả Sản Phẩm</h3>
-                <p>{{ pack.description_vi }}</p>
-            </div>
+        <div class="description">
+            <h3>Mô Tả Sản Phẩm</h3>
+            <p>{{ pack.description_vi }}</p>
         </div>
 
     </div>
+
+</div>
 
 </div>
 <script>
