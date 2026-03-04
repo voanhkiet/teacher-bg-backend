@@ -58,40 +58,58 @@
                 grid-template-columns: 1fr;
             }
         }
-        .preview-gallery {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
+        .product-gallery{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
 }
 
-.preview-thumb {
-    width: 120px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s;
+.main-image img{
+    width:600px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-.preview-thumb:hover {
-    transform: scale(1.05);
+.preview-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.preview-thumb{
+    width:90px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+    border:2px solid transparent;
+}
+
+.preview-thumb:hover{
+    transform:scale(1.05);
+}
+
+.preview-thumb.active{
+    border:2px solid #22c55e;
 }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="product-gallery">
 
-    <div class="product-layout">
+    <div class="main-image">
+        <img id="mainPreview" src="{{ pack.cover_image }}">
+    </div>
 
-        <div class="product-image">
-            <img src="{{ pack.cover_image }}" alt="{{ pack.title_vi }}">
-        </div>
-        {% if pack.preview_images %}
-<div class="preview-gallery">
-    {% for img in pack.preview_images %}
-        <img src="{{ img }}" class="preview-thumb">
-    {% endfor %}
+    {% if pack.preview_images %}
+    <div class="preview-list">
+        {% for img in pack.preview_images %}
+            <img src="{{ img }}" class="preview-thumb">
+        {% endfor %}
+    </div>
+    {% endif %}
+
 </div>
-{% endif %}
         <div>
             <h1>{{ pack.title_vi }}</h1>
 
@@ -122,11 +140,24 @@
 
 </div>
 <script>
-document.querySelectorAll('.preview-thumb').forEach(img => {
-    img.addEventListener('click', function() {
-        document.querySelector('.product-image img').src = this.src;
-    });
-});
+
+const mainImage = document.getElementById("mainPreview")
+
+document.querySelectorAll(".preview-thumb").forEach(img => {
+
+    img.addEventListener("click", function(){
+
+        mainImage.src = this.src
+
+        document.querySelectorAll(".preview-thumb")
+        .forEach(i => i.classList.remove("active"))
+
+        this.classList.add("active")
+
+    })
+
+})
+
 </script>
 </body>
 </html>
