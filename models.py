@@ -94,8 +94,8 @@ class Ownership(db.Model):
     )
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    pack_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=True)
+    pack_id = db.Column(db.Integer, db.ForeignKey("pack.id"), nullable=False)
     provider = db.Column(db.String(20))  # momo_manual
     amount_vnd = db.Column(db.Integer)
     status = db.Column(db.String(20), default="pending")
