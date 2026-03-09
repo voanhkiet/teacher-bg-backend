@@ -98,7 +98,9 @@
 }
 
 .preview-list{
-    flex-direction:row;
+    display:flex;
+    gap:12px;
+    margin-bottom:15px;
 }
 
 .preview-thumb{
@@ -119,15 +121,20 @@
     <div class="product-gallery">
 
         <div class="main-image">
-            <img id="mainPreview" src="{{ pack.cover_image }}">
+           <img id="mainPreview"
+     src="{{ pack.preview_images[0] }}"
+     style="width:100%;border-radius:12px;">
         </div>
 
         {% if pack.preview_images %}
-        <div class="preview-list">
-            {% for img in pack.preview_images %}
-                <img src="{{ img }}" class="preview-thumb">
-            {% endfor %}
-        </div>
+       <div class="preview-list">
+
+{% for img in pack.preview_images %}
+<img src="{{ img }}"
+     class="preview-thumb {% if loop.index == 1 %}active{% endif %}">
+{% endfor %}
+
+</div>
         {% endif %}
 
     </div>
@@ -166,22 +173,22 @@
 </div>
 <script>
 
-const mainImage = document.getElementById("mainPreview")
+const mainImage = document.getElementById("mainPreview");
 
 document.querySelectorAll(".preview-thumb").forEach(img => {
 
     img.addEventListener("click", function(){
 
-        mainImage.src = this.src
+        mainImage.src = this.src;
 
         document.querySelectorAll(".preview-thumb")
-        .forEach(i => i.classList.remove("active"))
+            .forEach(i => i.classList.remove("active"));
 
-        this.classList.add("active")
+        this.classList.add("active");
 
-    })
+    });
 
-})
+});
 
 </script>
 </body>

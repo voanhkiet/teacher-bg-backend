@@ -1,7 +1,11 @@
+import os
+import zipfile
+import tempfile
+
 from flask import  request, jsonify, render_template, redirect, session, url_for
 from datetime import datetime
 from sqlalchemy import func
-
+import json
 from extensions import db
 from models import User, Pack, Payment, Ownership, AdminActionLog
 from utils.auth import admin_required
@@ -9,6 +13,8 @@ from . import admin_bp
 from utils.admin_session import admin_session_required
 from werkzeug.security import check_password_hash
 from datetime import datetime, timedelta
+from utils.storage import upload_file
+from werkzeug.utils import secure_filename
 
 MAX_FAILED_ATTEMPTS = 5
 FAILED_WINDOW_MINUTES = 5
@@ -521,3 +527,63 @@ def admin_logs():
         }
     )
 
+@admin_bp.route("/upload-pack", methods=["GET", "POST"])
+def upload_pack():
+
+    if request.method == "POST":
+
+        name = request.form["name"]
+        price = int(request.form["price"])
+        description = request.form.get("description")
+
+        # remove spaces for safe folder
+        safe_name = name.lower().replace(" ", "-")
+
+        zip_file = request.files["slides_zip"]
+
+        upload_dir = f"/tmp/{safe_name}"
+        os.makedirs(upload_dir, exist_ok=True)
+
+        zip_path = os.path.join(upload_dir, "slides.zip")
+        zip_file.save(zip_path)
+
+        # extract zip
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(upload_dir)
+
+        previews = []
+        cover_image = None
+
+        for file in os.listdir(upload_dir):
+
+            if file.endswith(".png") or file.endswith(".jpg"):
+
+                local_path = os.path.join(upload_dir, file)
+
+                r2_key = f"packs/{safe_name}/{file}"
+
+                url = upload_file(local_path, r2_key)
+
+                if cover_image is None:
+                    cover_image = url
+
+                previews.append(url)
+
+        pack = Pack(
+            title_vi=name,
+            title_en=name,
+            subject="general",
+            price_vnd=price,
+            description_vi=description,
+            description_en=description,
+            cover_image=cover_image,
+            file_path=f"packs/{safe_name}",
+            preview_images=previews
+        )
+
+        db.session.add(pack)
+        db.session.commit()
+
+        return redirect(url_for("admin.dashboard"))
+
+    return render_template("upload_pack.html")

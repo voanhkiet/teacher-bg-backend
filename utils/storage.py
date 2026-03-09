@@ -21,3 +21,13 @@ def generate_download_url(key, expires=60):
         },
         ExpiresIn=expires
     )
+def upload_file(local_path, key):
+
+    client = get_r2_client()
+    bucket = os.getenv("R2_BUCKET")
+
+    client.upload_file(local_path, bucket, key)
+
+    public_url = os.getenv("R2_PUBLIC_URL")
+
+    return f"{public_url}/{key}"
